@@ -1,3 +1,15 @@
+:root {
+  --blush: #ffeaf1;
+  --ink: #40294a;
+  --bubblegum: #ff7da8;
+  --lilac: #e6dbff;
+  --mint: #c8f0e0;
+  --butter: #ffe08a;
+  --discover-border: #ece8ef;
+  --discover-muted: #77717f;
+  --discover-accent: #ff7da8;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -446,36 +458,191 @@ aside nav ul li a {
   padding: 30px 20px 100px;
 }
 
-#for_you article {
-  margin-bottom: 45px;
+.discover_post {
+  margin-bottom: 38px;
+  overflow: hidden;
+  border: 1px solid var(--discover-border);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(64, 41, 74, 0.06);
 }
 
 .media {
+  position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-radius: 12px;
+  background: #211b25;
+  isolation: isolate;
 }
 
-.media img {
+.media_content {
   width: 100%;
   height: 100%;
+  display: block;
   object-fit: cover;
 }
 
-.article_info {
-  padding: 12px 4px 0;
+.media video.media_content {
+  background: #111;
 }
 
-.article_info h3 {
-  margin: 0 0 5px;
+.youtube_video {
+  border: 0;
+}
+
+.video_media {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.video_play_button,
+.video_rewind_button {
+  position: absolute;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 50%;
+  background: rgba(20, 13, 23, 0.42);
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+
+.video_play_button {
+  top: 50%;
+  left: 50%;
+  width: 76px;
+  height: 76px;
+  transform: translate(-50%, -50%);
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.video_play_button:hover {
+  background: rgba(20, 13, 23, 0.65);
+  transform: translate(-50%, -50%) scale(1.06);
+}
+
+.video_play_button svg {
+  width: 30px;
+  height: 30px;
+  margin-left: 3px;
+}
+
+.video_rewind_button {
+  right: 18px;
+  bottom: 92px;
+  width: 58px;
+  height: 58px;
+  grid-template-columns: auto auto;
+  gap: 2px;
+  border-radius: 18px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.video_rewind_button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.post_overlay {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  padding: 22px 18px 18px;
+  background: linear-gradient(
+    to top,
+    rgba(20, 13, 23, 0.9) 0%,
+    rgba(20, 13, 23, 0.62) 48%,
+    transparent 100%
+  );
+  color: #fff;
+}
+
+.post_details {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.post_profile_image {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.post_copy {
+  min-width: 0;
+}
+
+.post_handle {
+  margin: 0 0 2px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.post_copy h2 {
+  margin: 0 0 2px;
   font-size: 17px;
+  line-height: 1.2;
 }
 
-.article_info p {
+.post_subtitle {
   margin: 0;
-  color: #777;
+  color: rgba(255, 255, 255, 0.84);
   font-size: 14px;
+  line-height: 1.35;
+}
+
+.like_button {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.like_button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.like_button:active {
+  transform: scale(0.9);
+}
+
+.like_button.liked {
+  background: var(--discover-accent);
+  color: #fff;
+}
+
+.like_button svg {
+  width: 23px;
+  height: 23px;
 }
 
 .mobile_search_item {
@@ -491,6 +658,52 @@ aside nav ul li a {
 }
 
 @media (max-width: 700px) {
+  #for_you {
+    padding: 0 0 calc(76px + env(safe-area-inset-bottom));
+  }
+
+  .discover_post {
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .media {
+    aspect-ratio: 4 / 5;
+    min-height: calc(100svh - 76px);
+  }
+
+  .video_rewind_button {
+    right: 16px;
+    bottom: 92px;
+  }
+
+  .post_overlay {
+    padding: 24px 16px calc(18px + env(safe-area-inset-bottom));
+  }
+
+  .post_details {
+    align-items: flex-start;
+  }
+
+  .post_profile_image {
+    width: 40px;
+    height: 40px;
+  }
+
+  .post_copy h2 {
+    font-size: 16px;
+  }
+
+  .post_subtitle {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
   #my_main_app,
   #my_main_app:has(> aside.collapsed) {
     display: block;
@@ -1203,13 +1416,6 @@ aside nav ul li a {
 @import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&display=swap");
 
 .camera {
-  --blush: #ffeaf1;
-  --ink: #40294a;
-  --bubblegum: #ff7da8;
-  --lilac: #e6dbff;
-  --mint: #c8f0e0;
-  --butter: #ffe08a;
-
   position: relative;
   min-height: 100vh;
   min-height: 100dvh;
