@@ -1,37 +1,7 @@
 function Following() {
 
   const following = [
-    {
-      id: 1,
-      username: "maria",
-      name: "Maria",
-      profile: "https://i.pravatar.cc/150?img=47",
-      posts: [
-        {
-          id: 1,
-          image: "https://picsum.photos/700/500?random=1",
-          caption: "A little moment from today."
-        },
-        {
-          id: 2,
-          image: "https://picsum.photos/700/500?random=2",
-          caption: "Weekend adventures."
-        }
-      ]
-    },
-    {
-      id: 2,
-      username: "josh",
-      name: "Josh",
-      profile: "https://i.pravatar.cc/150?img=12",
-      posts: [
-        {
-          id: 3,
-          image: "https://picsum.photos/700/500?random=3",
-          caption: "Working on something new."
-        }
-      ]
-    }
+   
   ];
 
   return (

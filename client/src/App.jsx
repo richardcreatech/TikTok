@@ -9,6 +9,7 @@ import Camera from "./pages/App/Camera/Camera";
 import Auth from "./pages/Auth/Auth";
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
+import About_Post from "./pages/App/Camera/About_Post";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="inbox" element={<Inbox />} />
         <Route path="chat" element={<Chat />} />
         <Route path="upload" element={<Camera />} />
+        <Route path="about_post" element={<About_Post />} />
       </Route>
     </Routes>
   );

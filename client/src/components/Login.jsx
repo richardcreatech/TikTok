@@ -1,17 +1,51 @@
 import { Link } from "react-router-dom";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import {
   faEnvelope,
   faLock,
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 
+import API_URL from "../api/my_api_url";
+
 function Login() {
-
-
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    location.href = "/en";
+
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+
+    try {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message);
+        return;
+      }
+
+      console.log(data);
+
+      // Login successful
+      location.href = "/en";
+    } catch (error) {
+      console.error("Login error:", error);
+
+      alert("Unable to connect to the server.");
+    }
   }
 
   return (
@@ -27,6 +61,7 @@ function Login() {
 
           <div className="input_box">
             <FontAwesomeIcon icon={faEnvelope} />
+
             <input
               type="email"
               id="email"
@@ -41,6 +76,7 @@ function Login() {
 
           <div className="input_box">
             <FontAwesomeIcon icon={faLock} />
+
             <input
               type="password"
               id="password"
@@ -56,7 +92,10 @@ function Login() {
             <span>Remember me</span>
           </label>
 
-          <button type="button" className="forgot_password">
+          <button
+            type="button"
+            className="forgot_password"
+          >
             Forgot password?
           </button>
         </div>

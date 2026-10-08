@@ -1,46 +1,125 @@
+import { useEffect, useState } from "react";
+
+import API_URL from "../../api/my_api_url";
+
+import EditProfile from "../../components/EditProfile";
+
 function Profile() {
-  const user = {
-    name: "Richard",
-    username: "@richard",
-    profile: "https://i.pinimg.com/1200x/2c/b9/37/2cb937b15158720ddb7be0ed57caaf6f.jpg",
-    bio: "Building things, learning things.",
+
+  const [user, setUser] = useState(null);
+
+  const [posts, setPosts] = useState([]);
+
+  const [isEditing, setIsEditing] = useState(false);
+
+  const [refreshVersion, setRefreshVersion] = useState(0);
+
+  const [postsLoading, setPostsLoading] = useState(true);
+
+
+  const hardcodedData = {
     followers: 128,
     following: 64,
-    posts: [
-      {
-        id: 1,
-        image: "https://picsum.photos/500/500?random=1",
-      },
-      {
-        id: 2,
-        image: "https://picsum.photos/500/500?random=2",
-      },
-      {
-        id: 3,
-        image: "https://picsum.photos/500/500?random=3",
-      },
-      {
-        id: 4,
-        image: "https://picsum.photos/500/500?random=4",
-      },
-      {
-        id: 5,
-        image: "https://picsum.photos/500/500?random=5",
-      },
-      {
-        id: 6,
-        image: "https://picsum.photos/500/500?random=6",
-      },
-    ],
+  };
+
+
+  useEffect(() => {
+
+    async function getUser() {
+
+      try {
+
+        const response = await fetch(
+          `${API_URL}/api/me`,
+          {
+            credentials: "include",
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          console.error(data.message);
+          return;
+        }
+
+        setUser(data.user);
+
+      } catch (error) {
+
+        console.error(
+          "Error getting profile:",
+          error
+        );
+
+      }
+
+    }
+
+    getUser();
+
+  }, [refreshVersion]);
+
+
+  useEffect(() => {
+
+    async function getUserPosts() {
+
+      if (!user) return;
+
+      try {
+
+        const response = await fetch(
+          `${API_URL}/api/posts/user/${user.id}`,
+          {
+            credentials: "include",
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          console.error(data.message);
+          return;
+        }
+
+        setPosts(data.posts);
+
+      } catch (error) {
+
+        console.error(
+          "Error getting user posts:",
+          error
+        );
+
+      } finally {
+
+        setPostsLoading(false);
+
+      }
+
+    }
+
+    getUserPosts();
+
+  }, [user]);
+
+
+  if (!user) {
+
+    return <p>Loading profile...</p>;
+
   }
 
+
   return (
+
     <section id="profile_pg">
 
       <header className="profile_header">
 
         <img
-          src={user.profile}
+          src={user.profile_picture}
           alt={`${user.name}'s profile`}
           className="profile_image"
         />
@@ -48,29 +127,58 @@ function Profile() {
         <div className="profile_details">
 
           <div className="profile_name">
-            <h1>{user.name}</h1>
-            <p>{user.username}</p>
+
+            <h1>
+              {user.name}
+            </h1>
+
+            <p>
+              @{user.username}
+            </p>
+
           </div>
+
 
           <p className="profile_bio">
-            {user.bio}
+
+            {user.bio || "No bio yet."}
+
           </p>
 
+
           <div className="profile_stats">
+
             <span>
-              <strong>{user.posts.length}</strong> posts
+              <strong>
+                {posts.length}
+              </strong>{" "}
+              posts
             </span>
 
             <span>
-              <strong>{user.followers}</strong> followers
+              <strong>
+                {hardcodedData.followers}
+              </strong>{" "}
+              followers
             </span>
 
             <span>
-              <strong>{user.following}</strong> following
+              <strong>
+                {hardcodedData.following}
+              </strong>{" "}
+              following
             </span>
+
           </div>
 
-          <button className="edit_profile">
+
+          <button
+            type="button"
+            className="edit_profile"
+            onClick={() =>
+              setIsEditing(true)
+            }
+          >
             Edit Profile
           </button>
 
@@ -78,16 +186,76 @@ function Profile() {
 
       </header>
 
+
       <div className="profile_posts">
-        {user.posts.map((post) => (
-          <article key={post.id}>
-            <img src={post.image} alt="" />
-          </article>
-        ))}
+
+        {postsLoading ? (
+
+          <p>Loading posts...</p>
+
+        ) : posts.length === 0 ? (
+
+          <p>No posts yet.</p>
+
+        ) : (
+
+          posts.map((post) => (
+
+            <article
+              key={post.id}
+              className="profile_post"
+            >
+
+              {post.mediaType === "video" ? (
+
+                <video
+                  src={post.mediaUrl}
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  className="profile_post_media"
+                />
+
+              ) : (
+
+                <img
+                  src={post.mediaUrl}
+                  alt={post.title || "Post"}
+                  className="profile_post_media"
+                />
+
+              )}
+
+            </article>
+
+          ))
+
+        )}
+
       </div>
 
+
+      {isEditing && (
+
+        <EditProfile
+          user={user}
+          onClose={() =>
+            setIsEditing(false)
+          }
+          onUpdated={() =>
+            setRefreshVersion(
+              (version) => version + 1
+            )
+          }
+        />
+
+      )}
+
     </section>
-  )
+
+  );
+
 }
 
-export default Profile
+export default Profile;

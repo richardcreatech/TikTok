@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import {
   faUser,
   faEnvelope,
@@ -7,11 +9,46 @@ import {
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 
-function SignUp() {
+import API_URL from "../api/my_api_url";
 
-    function handleSubmit(e) {
+function SignUp() {
+  async function handleSubmit(e) {
     e.preventDefault();
-    location.href = "/en";
+
+    const name = e.target.name.value;
+    const email = e.target.signup_email.value;
+    const password = e.target.signup_password.value;
+
+    try {
+      const response = await fetch(`${API_URL}/api/auth/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message);
+        return;
+      }
+
+      console.log(data);
+
+      // Signup successful
+      location.href = "/auth/login";
+    } catch (error) {
+      console.error("Signup error:", error);
+
+      alert("Unable to connect to the server.");
+    }
   }
 
   return (
@@ -27,12 +64,8 @@ function SignUp() {
 
           <div className="input_box">
             <FontAwesomeIcon icon={faUser} />
-            <input
-              type="text"
-              id="name"
-              placeholder="Your name"
-              required
-            />
+
+            <input type="text" id="name" placeholder="Your name" required />
           </div>
         </div>
 
@@ -41,6 +74,7 @@ function SignUp() {
 
           <div className="input_box">
             <FontAwesomeIcon icon={faEnvelope} />
+
             <input
               type="email"
               id="signup_email"
@@ -55,6 +89,7 @@ function SignUp() {
 
           <div className="input_box">
             <FontAwesomeIcon icon={faLock} />
+
             <input
               type="password"
               id="signup_password"

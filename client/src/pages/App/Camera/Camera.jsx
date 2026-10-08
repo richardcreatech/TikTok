@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaceLandmarker, FilesetResolver } from "@mediapipe/tasks-vision";
 
 // ─────────────────────────────────────────────────────────────
@@ -320,6 +321,7 @@ export default function Camera({ onClose, onUse }) {
   const [faceFound, setFaceFound] = useState(false);
   const [photo, setPhoto] = useState(null);
   const [flash, setFlash] = useState(false);
+  const navigate = useNavigate();
 
   const selectedFilter = filters.find((f) => f.id === selectedId) || null;
 
@@ -489,14 +491,34 @@ export default function Camera({ onClose, onUse }) {
   };
 
   const usePhoto = () => {
+    if (!photo) return;
+
     if (onUse) {
       onUse(photo);
       return;
     }
-    const link = document.createElement("a");
-    link.href = photo;
-    link.download = "gamani-photo.jpg";
-    link.click();
+
+    navigate("/en/about_post", { state: { photo } });
+  };
+
+  const selectMedia = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const isVideo = file.type.startsWith("video/");
+    const isImage = file.type.startsWith("image/");
+    if (!isVideo && !isImage) return;
+
+    navigate("/en/about_post", {
+      state: {
+        media: {
+          type: isVideo ? "video" : "image",
+          source: file,
+          fileName: file.name,
+          mimeType: file.type,
+        },
+      },
+    });
   };
 
   const close = () => (onClose ? onClose() : window.history.back());
@@ -602,7 +624,7 @@ export default function Camera({ onClose, onUse }) {
               Retake
             </button>
             <button className="camera__pill" type="button" onClick={usePhoto}>
-              Use photo
+              Post
             </button>
           </div>
         ) : (
@@ -640,6 +662,17 @@ export default function Camera({ onClose, onUse }) {
             <p className="camera__filter-name">
               {selectedFilter ? selectedFilter.name : "No filter"}
             </p>
+
+            <div className="camera__upload-actions">
+              <label className="camera__upload-button">
+                Upload photos or videos
+                <input
+                  type="file"
+                  accept="image/*,video/*"
+                  onChange={selectMedia}
+                />
+              </label>
+            </div>
 
             <button
               className="camera__shutter"
